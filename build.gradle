@@ -1,0 +1,184 @@
+plugins {
+    id 'java'
+    id 'application'
+    id 'io.gatling.gradle' version '3.11.5.2'
+}
+
+group = 'com.example'
+version = '1.0.0'
+sourceCompatibility = '17'
+
+repositories {
+    mavenCentral()
+}
+
+// Gatling configuration
+gatling {
+    // Automatically apply gatling plugin settings
+    toolVersion = '3.11.5'
+
+    // Configure simulations
+    simulations = {
+        include '**/JavaApiTestSimulation.java'
+        include '**/QuickTestSimulation.java'
+    }
+
+    // JVM settings for Gatling
+    jvmArgs = ['-Xmx2048m', '-Xms1024m']
+
+    // System properties
+    systemProperties = [
+        'gatling.data.writers': 'console,file',
+        'gatling.charting.noReports': 'false'
+    ]
+}
+
+dependencies {
+    // Spring Boot Dependencies for API
+    implementation 'org.springframework.boot:spring-boot-starter-web:3.3.5'
+    implementation 'org.springframework.boot:spring-boot-starter-actuator:3.3.5'
+    implementation 'org.springframework.boot:spring-boot-starter-logging:3.3.5'
+
+    // JSON Processing
+    implementation 'com.fasterxml.jackson.core:jackson-databind:2.16.1'
+
+    // Gatling Dependencies (automatically handled by plugin)
+    gatling 'io.gatling.highcharts:gatling-charts-highcharts:3.11.5'
+
+    // JUnit for Testing Framework
+    testImplementation 'org.junit.jupiter:junit-jupiter-engine:5.10.1'
+    testImplementation 'org.junit.jupiter:junit-jupiter-api:5.10.1'
+
+    // Java HTTP Client for Testing
+    testImplementation 'org.apache.httpcomponents.client5:httpclient5:5.3.1'
+}
+
+// Configure Java compilation
+java {
+    sourceCompatibility = JavaVersion.VERSION_17
+    targetCompatibility = JavaVersion.VERSION_17
+}
+
+compileJava {
+    options.encoding = 'UTF-8'
+    options.release = 17
+}
+
+compileTestJava {
+    options.encoding = 'UTF-8'
+    options.release = 17
+}
+
+// Spring Boot application configuration
+application {
+    mainClass = 'com.example.api.ApiApplication'
+}
+
+// Task to run Spring Boot API
+task runApi(type: JavaExec) {
+    group = 'application'
+    description = 'Run the Spring Boot API server'
+    classpath = sourceSets.main.runtimeClasspath
+    mainClass = 'com.example.api.ApiApplication'
+
+    doFirst {
+        println "Starting Spring Boot API on http://localhost:8080"
+    }
+}
+
+// Task to generate JUnit XML reports
+task generateJUnitXml(type: JavaExec) {
+    group = 'reporting'
+    description = 'Generate JUnit XML report from Gatling results'
+    classpath = sourceSets.main.runtimeClasspath
+    mainClass = 'com.example.reporting.GatlingJUnitReportGenerator'
+
+    dependsOn 'gatlingRun'
+
+    doFirst {
+        println "Generating JUnit XML report from Gatling simulation results..."
+    }
+
+    doLast {
+        println "JUnit XML report generated successfully"
+    }
+}
+
+// Custom task for complete performance test workflow
+task performanceTest {
+    group = 'verification'
+    description = 'Run complete performance testing workflow with dual report generation'
+
+    dependsOn 'clean', 'compileJava', 'gatlingRun', 'generateJUnitXml'
+
+    doLast {
+        // Copy reports to centralized directory
+        copy {
+            from fileTree('build/reports/gatling').include('**/*')
+            into 'reports'
+        }
+
+        copy {
+            from 'build/gatling/junit'
+            into 'reports'
+            include '*.xml'
+        }
+
+        println "✅ Performance tests completed successfully!"
+        println "📁 Reports available in: reports/"
+        println "📊 HTML Report: reports/index.html"
+        println "🧪 JUnit XML: reports/TEST-JavaApiTestSimulation.xml"
+    }
+}
+
+// Task to run quick performance validation
+task quickPerformanceTest(type: GatlingRunTask) {
+    group = 'verification'
+    description = 'Run quick performance validation tests'
+
+    simulation = 'simulations.QuickTestSimulation'
+
+    doLast {
+        println "Quick performance test completed"
+    }
+}
+
+// Configure test task to exclude Gatling simulations
+test {
+    useJUnitPlatform()
+
+    exclude '**/simulations/**'
+    exclude '**/*Simulation.class'
+
+    testLogging {
+        events "passed", "skipped", "failed"
+        exceptionFormat "full"
+    }
+}
+
+// Task to setup reports directory
+task setupReports {
+    group = 'build setup'
+    description = 'Create and prepare reports directory'
+
+    doLast {
+        mkdir 'reports'
+        println "Reports directory created: reports/"
+    }
+}
+
+// Ensure reports directory exists before running tests
+gatlingRun.dependsOn setupReports
+performanceTest.dependsOn setupReports
+
+// Configure clean task
+clean {
+    delete 'reports'
+    delete 'build'
+}
+
+// Gradle wrapper configuration
+wrapper {
+    gradleVersion = '8.5'
+    distributionType = Wrapper.DistributionType.BIN
+}

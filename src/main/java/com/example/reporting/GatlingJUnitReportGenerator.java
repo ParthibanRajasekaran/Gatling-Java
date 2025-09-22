@@ -28,8 +28,8 @@ import java.util.stream.Stream;
  */
 public class GatlingJUnitReportGenerator {
 
-    private static final String GATLING_DIR = "target/gatling";
-    private static final String JUNIT_DIR = "target/gatling/junit";
+    private static final String GATLING_DIR = "build/reports/gatling";
+    private static final String JUNIT_DIR = "build/gatling/junit";
     private static final String OUTPUT_FILE = "TEST-JavaApiTestSimulation.xml";
 
     public static void main(String[] args) {

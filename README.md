@@ -1,19 +1,19 @@
-b pages# Gatling Java Performance Testing Framework
+# Gatling Java Performance Testing Framework (Gradle Edition)
 
-A comprehensive performance testing suite built with **Gatling Java API** and **Spring Boot**, featuring automated dual report generation (HTML + JUnit XML) with zero external dependencies.
+A comprehensive performance testing suite built with **Gatling Java API** and **Spring Boot**, featuring automated dual report generation (HTML + JUnit XML) using **Gradle build system** with zero external dependencies.
 
 ## 🚀 Quick Start
 
 ### Prerequisites
 - **Java 17+** 
-- **Maven 3.6+**
+- **No Gradle installation required** (uses Gradle Wrapper)
 - **Git**
 
 ### 1. Clone and Setup
 ```bash
 git clone <your-repo-url>
 cd Gatling-Java
-mvn clean compile
+./gradlew build
 ```
 
 ## 🏃‍♂️ Running Tests
@@ -26,7 +26,7 @@ mvn clean compile
 This script will:
 - Clean previous results
 - Start the mock API server
-- Execute Gatling performance tests
+- Execute Gatling performance tests with Gradle
 - Generate both HTML and JUnit XML reports
 - Copy all reports to the `reports/` directory
 - Display test summary
@@ -45,30 +45,32 @@ python3 mock-api.py
 
 **Option B: Spring Boot API (Full Featured)**
 ```bash
-mvn spring-boot:run
+./gradlew runApi
 # Full Spring Boot application with logging and actuator endpoints
 ```
 
 #### Run Gatling Tests
 ```bash
-# Run specific simulation
-mvn gatling:test -Dgatling.simulationClass=simulations.JavaApiTestSimulation
+# Run specific simulation with Gradle
+./gradlew gatlingRun --simulation=simulations.JavaApiTestSimulation
 
-# Or run with performance profile
-mvn test -Pperformance
+# Or run performance test workflow
+./gradlew performanceTest
+
+# Quick validation test
+./gradlew quickPerformanceTest
 ```
 
 #### Generate JUnit XML Report
 ```bash
 # Using Java implementation (no Python dependency)
-mvn exec:java -Dexec.mainClass="com.example.reporting.GatlingJUnitReportGenerator"
+./gradlew generateJUnitXml
 ```
 
-### Option 3: Maven-Only Approach
+### Option 3: Gradle-Only Approach
 ```bash
-# Complete workflow with Maven
-mvn clean gatling:test
-mvn exec:java -Dexec.mainClass="com.example.reporting.GatlingJUnitReportGenerator"
+# Complete workflow with Gradle
+./gradlew clean performanceTest
 ```
 
 ## 📊 Viewing Reports
@@ -116,17 +118,42 @@ reports/                          # 📁 Centralized reports directory
 ├── js/ and style/               # 🎨 Supporting assets
 └── simulation.log               # 📋 Raw Gatling data
 
-target/gatling/                   # 📁 Original Gatling output
+build/reports/gatling/            # 📁 Gradle Gatling output
 ├── javaapitestsimulation-*/     # 📊 Timestamped HTML reports
 └── junit/                       # 🧪 JUnit XML reports
 ```
 
-## 🔧 Test Configuration
+## 🔧 Available Gradle Tasks
+
+### Gatling Tasks
+```bash
+./gradlew gatlingRun              # Run all Gatling simulations
+./gradlew gatlingRun --simulation=simulations.JavaApiTestSimulation  # Run specific simulation
+./gradlew quickPerformanceTest    # Run quick validation tests
+./gradlew performanceTest         # Complete performance test workflow
+```
+
+### Application Tasks
+```bash
+./gradlew runApi                  # Start Spring Boot API server
+./gradlew generateJUnitXml        # Generate JUnit XML reports
+./gradlew build                   # Build the entire project
+./gradlew clean                   # Clean build artifacts
+```
 
 ### Available Simulations
 - **`JavaApiTestSimulation`** - Main performance test with realistic load patterns
 - **`QuickTestSimulation`** - Fast validation test for CI pipelines
 - **`JavaPerformanceTest`** - Extended load testing scenarios
+
+## 🎯 Build System Benefits
+
+### Gradle with Gatling Plugin Advantages
+- 🚀 **Native Gatling integration** - purpose-built for performance testing
+- 📦 **Zero Maven overhead** - lightweight, focused build system
+- 🔧 **Simplified configuration** - Gatling plugin handles complexity
+- ⚡ **Faster builds** - optimized for test execution
+- 🎯 **Task-based workflow** - granular control over test execution
 
 ### Performance Thresholds
 The tests validate these performance criteria:
@@ -175,23 +202,24 @@ curl http://localhost:8080/api/users/health
 # Should return: {"status": "healthy", "timestamp": ...}
 ```
 
-**Maven compilation errors:**
+**Gradle build errors:**
 ```bash
-# Clean and recompile
-mvn clean compile
+# Clean and rebuild
+./gradlew clean build
 ```
 
 **Reports not generated:**
 ```bash
 # Check if Gatling tests completed successfully
-ls -la target/gatling/
+ls -la build/reports/gatling/
 # Manually run report generator
-mvn exec:java -Dexec.mainClass="com.example.reporting.GatlingJUnitReportGenerator"
+./gradlew generateJUnitXml
 ```
 
 ### Log Locations
-- **Gatling logs**: `target/gatling/*/simulation.log`
-- **Spring Boot logs**: Console output during `mvn spring-boot:run`
+- **Gatling logs**: `build/reports/gatling/*/simulation.log`
+- **Gradle logs**: Console output during `./gradlew` commands
+- **Spring Boot logs**: Console output during `./gradlew runApi`
 - **Mock API logs**: Console output during `python3 mock-api.py`
 
 ## 🔄 CI/CD Integration
@@ -202,7 +230,7 @@ pipeline {
     stages {
         stage('Performance Tests') {
             steps {
-                sh './run-tests-with-reports.sh'
+                sh './gradlew clean performanceTest'
                 publishHTML([
                     allowMissing: false,
                     alwaysLinkToLastBuild: true,
@@ -222,7 +250,7 @@ pipeline {
 ```yaml
 performance_tests:
   script:
-    - ./run-tests-with-reports.sh
+    - ./gradlew clean performanceTest
   artifacts:
     reports:
       junit: reports/TEST-JavaApiTestSimulation.xml
@@ -234,7 +262,7 @@ performance_tests:
 ### GitHub Actions Example
 ```yaml
 - name: Run Performance Tests
-  run: ./run-tests-with-reports.sh
+  run: ./gradlew clean performanceTest
 
 - name: Publish Test Results
   uses: dorny/test-reporter@v1
@@ -259,6 +287,23 @@ performance_tests:
 - **Requests/sec**: Throughput measurement
 - **Success Rate**: Percentage of successful requests
 
+## 🏗️ Build System Migration
+
+### From Maven to Gradle
+This project has been migrated from Maven to Gradle with Gatling plugin for:
+- **Better Gatling integration** - native plugin support
+- **Simplified configuration** - less XML, more concise build scripts
+- **Faster execution** - optimized for performance testing workflows
+- **Task-based approach** - granular control over test execution phases
+
+### Key Differences
+| Aspect | Maven | Gradle (Current) |
+|--------|--------|------------------|
+| **Build File** | `pom.xml` | `build.gradle` |
+| **Test Execution** | `mvn gatling:test` | `./gradlew gatlingRun` |
+| **Report Generation** | `mvn exec:java` | `./gradlew generateJUnitXml` |
+| **Complete Workflow** | Custom Maven phases | `./gradlew performanceTest` |
+
 ## 🤝 Contributing
 
 To add new test scenarios:
@@ -276,3 +321,4 @@ For issues or questions:
 1. Check the troubleshooting section above
 2. Review the sample reports in the `reports/` directory
 3. Examine the generated logs for error details
+4. Run `./gradlew tasks --group=gatling` to see available Gatling tasks
