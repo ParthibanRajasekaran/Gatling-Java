@@ -182,13 +182,11 @@
                         <id>generate-junit-xml</id>
                         <phase>test</phase>
                         <goals>
-                            <goal>exec</goal>
+                            <goal>java</goal>
                         </goals>
                         <configuration>
-                            <executable>python3</executable>
-                            <arguments>
-                                <argument>generate-junit-report.py</argument>
-                            </arguments>
+                            <mainClass>com.example.reporting.GatlingJUnitReportGenerator</mainClass>
+                            <classpathScope>compile</classpathScope>
                         </configuration>
                     </execution>
                 </executions>
