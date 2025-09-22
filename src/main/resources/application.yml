@@ -1,0 +1,39 @@
+server:
+  port: 8080
+  servlet:
+    context-path: /
+  compression:
+    enabled: true
+    mime-types: application/json,application/xml,text/html,text/xml,text/plain
+
+spring:
+  application:
+    name: gatling-performance-test-api
+  jackson:
+    default-property-inclusion: non_null
+    serialization:
+      write-dates-as-timestamps: false
+      indent-output: true
+    deserialization:
+      fail-on-unknown-properties: false
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,info,metrics
+      base-path: /actuator
+  endpoint:
+    health:
+      show-details: always
+  server:
+    port: 8081
+
+logging:
+  level:
+    com.example.api: INFO
+    org.springframework: WARN
+    root: INFO
+  pattern:
+    console: "%d{yyyy-MM-dd HH:mm:ss} - %msg%n"
+    file: "%d{yyyy-MM-dd HH:mm:ss} [%thread] %-5level %logger{36} - %msg%n"
