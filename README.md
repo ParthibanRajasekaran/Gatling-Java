@@ -11,7 +11,7 @@ A comprehensive performance testing suite built with **Gatling Java API** and **
 
 ### 1. Clone and Setup
 ```bash
-git clone <your-repo-url>
+git clone https://github.com/ParthibanRajasekaran/Gatling-Java.git
 cd Gatling-Java
 ./gradlew build
 ```
