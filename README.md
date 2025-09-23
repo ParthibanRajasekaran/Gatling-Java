@@ -224,6 +224,44 @@ ls -la build/reports/gatling/
 
 ## 🔄 CI/CD Integration
 
+### GitHub Actions (Automated)
+This project includes a comprehensive GitHub Actions workflow that automatically:
+- 🧪 **Runs performance tests** on every push and PR
+- 📊 **Generates dual reports** (HTML + JUnit XML)
+- 🌐 **Publishes results to GitHub Pages** for easy viewing
+- 📅 **Runs scheduled tests** daily at 2 AM UTC
+- 💬 **Comments on PRs** with performance results
+
+**Workflow Features:**
+- Automatic mock API server startup
+- Gradle-based test execution
+- Performance dashboard generation
+- GitHub Pages deployment
+- Test result artifacts
+
+**Accessing Results:**
+- **Live Dashboard**: Available at `https://[username].github.io/[repo-name]/`
+- **PR Comments**: Automatic performance summaries on pull requests
+- **Artifacts**: Downloadable reports for 30 days
+
+### Manual Triggers
+```bash
+# Trigger workflow manually from GitHub Actions tab
+# Or push to main/master branch to auto-trigger
+```
+
+### Local CI/CD Testing
+```bash
+# Test the complete workflow locally
+./run-tests-with-reports.sh
+
+# This mimics what GitHub Actions does:
+# 1. Starts mock API
+# 2. Runs Gradle performance tests  
+# 3. Generates reports
+# 4. Organizes results
+```
+
 ### Jenkins Pipeline Example
 ```groovy
 pipeline {
