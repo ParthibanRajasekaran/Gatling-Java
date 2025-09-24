@@ -1,6 +1,8 @@
 plugins {
     id 'java'
     id 'application'
+    id 'org.springframework.boot' version '3.3.5'
+    id 'io.spring.dependency-management' version '1.1.6'
     id 'io.gatling.gradle' version '3.11.5.2'
 }
 
@@ -14,9 +16,6 @@ repositories {
 
 // Gatling configuration
 gatling {
-    // Automatically apply gatling plugin settings
-    toolVersion = '3.11.5'
-
     // Configure simulations
     simulations = {
         include '**/JavaApiTestSimulation.java'
@@ -33,11 +32,16 @@ gatling {
     ]
 }
 
+// Application main class
+application {
+    mainClass = 'com.example.api.ApiApplication'
+}
+
 dependencies {
     // Spring Boot Dependencies for API
-    implementation 'org.springframework.boot:spring-boot-starter-web:3.3.5'
-    implementation 'org.springframework.boot:spring-boot-starter-actuator:3.3.5'
-    implementation 'org.springframework.boot:spring-boot-starter-logging:3.3.5'
+    implementation 'org.springframework.boot:spring-boot-starter-web'
+    implementation 'org.springframework.boot:spring-boot-starter-actuator'
+    implementation 'org.springframework.boot:spring-boot-starter-logging'
 
     // JSON Processing
     implementation 'com.fasterxml.jackson.core:jackson-databind:2.16.1'
@@ -67,11 +71,6 @@ compileJava {
 compileTestJava {
     options.encoding = 'UTF-8'
     options.release = 17
-}
-
-// Spring Boot application configuration
-application {
-    mainClass = 'com.example.api.ApiApplication'
 }
 
 // Task to run Spring Boot API

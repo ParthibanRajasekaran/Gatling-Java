@@ -1,47 +1,30 @@
-# Gradle
+# Build and dependency files
 build/
 .gradle/
-gradle-app.setting
-!gradle-wrapper.jar
-!gradle-wrapper.properties
-**/build/
-# Prevent accidental inclusion of locally downloaded Gradle distributions
-gradle-*/
-# Root-level downloaded archive (should not be committed)
-gradle.zip
-*.gradle.zip
+gradle-8.4/
+gradle-8.4-bin.zip
 
-# Maven cleanup artifacts (legacy / safety)
-.mvn/
-.maven-cleanup
-
-# IDE
+# IDE files
 .idea/
 *.iml
-*.ipr
 *.iws
+*.ipr
 .vscode/
-.eclipse/
 
-# OS
+# OS files
 .DS_Store
 Thumbs.db
 
-# Gatling Reports (keep sample reports in reports/ directory)
-build/reports/gatling/*/
-build/gatling/junit/*.xml
-
 # Logs
 *.log
+logs/
 
 # Temporary files
 *.tmp
 *.temp
 
-# Python
-__pycache__/
-*.pyc
-*.pyo
+# JUnit XML reports (can be regenerated)
+build/gatling/junit/
 
-# GitHub Pages build artifacts
-public/
+# Gatling results (can be regenerated)
+build/reports/gatling/

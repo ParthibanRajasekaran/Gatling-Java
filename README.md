@@ -1,362 +1,116 @@
-# Gatling Java Performance Testing Framework (Gradle Edition)
+# Gatling Java Performance Testing with JUnit XML Report Generation
 
-A comprehensive performance testing suite built with **Gatling Java API** and **Spring Boot**, featuring automated dual report generation (HTML + JUnit XML) using **Gradle build system** with zero external dependencies.
+A complete Gatling Java performance testing solution with dual report generation (HTML + JUnit XML).
 
-## 🚀 Quick Start
+## Features
+
+- ✅ Complete Spring Boot API with REST endpoints
+- ✅ Gatling performance test simulations
+- ✅ JUnit XML report generator for CI/CD integration
+- ✅ Dual reporting: HTML reports + XML reports
+- ✅ Performance assertions and thresholds
+- ✅ Gradle build automation with custom tasks
+
+## Quick Start
 
 ### Prerequisites
-- **Java 17+** 
-- **No Gradle installation required** (uses Gradle Wrapper)
-- **Git**
+- Java 17+
+- Gradle 8.4+ (or use wrapper)
 
-### 1. Clone and Setup
+### Run Performance Tests
+
 ```bash
-git clone https://github.com/ParthibanRajasekaran/Gatling-Java.git
-cd Gatling-Java
-./gradlew build
-```
-
-## 🏃‍♂️ Running Tests
-
-### Option 1: Automated Complete Workflow (Recommended)
-```bash
-# Start mock API server (in background) and run all tests
-./run-tests-with-reports.sh
-```
-This script will:
-- Clean previous results
-- Start the mock API server
-- Execute Gatling performance tests with Gradle
-- Generate both HTML and JUnit XML reports
-- Copy all reports to the `reports/` directory
-- Display test summary
-
-### Option 2: Manual Step-by-Step
-
-#### Start the API Server
-Choose one of these options:
-
-**Option A: Python Mock API (Lightweight)**
-```bash
-python3 mock-api.py
-# Server starts on http://localhost:8080
-# Provides endpoints: /api/users/health, /api/users, /api/users/{id}
-```
-
-**Option B: Spring Boot API (Full Featured)**
-```bash
-./gradlew runApi
-# Full Spring Boot application with logging and actuator endpoints
-```
-
-#### Run Gatling Tests
-```bash
-# Run specific simulation with Gradle
-./gradlew gatlingRun --simulation=simulations.JavaApiTestSimulation
-
-# Or run performance test workflow
+# Complete workflow (recommended)
 ./gradlew performanceTest
 
-# Quick validation test
-./gradlew quickPerformanceTest
+# Individual steps
+./gradlew runApi        # Start API server
+./gradlew gatlingRun    # Run Gatling tests
+./gradlew generateJUnitXml  # Generate JUnit XML
 ```
 
-#### Generate JUnit XML Report
-```bash
-# Using Java implementation (no Python dependency)
-./gradlew generateJUnitXml
+## Project Structure
+
+```
+├── src/main/java/com/example/
+│   ├── api/                    # Spring Boot API
+│   │   ├── ApiApplication.java
+│   │   ├── controller/UserController.java
+│   │   ├── model/User.java
+│   │   └── service/UserService.java
+│   └── reporting/
+│       └── GatlingJUnitReportGenerator.java  # JUnit XML generator
+├── src/test/java/simulations/
+│   ├── JavaApiTestSimulation.java    # Main performance tests
+│   ├── QuickTestSimulation.java      # Quick validation tests
+│   └── [other simulation files]
+├── build.gradle                      # Build configuration
+└── INTEGRATION_GUIDE.md              # Detailed integration guide
 ```
 
-### Option 3: Gradle-Only Approach
-```bash
-# Complete workflow with Gradle
-./gradlew clean performanceTest
-```
+## Reports Generated
 
-## 📊 Viewing Reports
-
-### HTML Reports (Interactive Dashboard)
-```bash
-# Open in browser
-open reports/index.html
-# or
-firefox reports/index.html
-```
-
-**HTML Report Features:**
-- 📈 **Interactive performance charts** with response time distributions
-- 🎯 **Detailed request metrics** for each endpoint
-- 📋 **Global statistics** with percentiles and throughput
-- 🔍 **Individual request analysis** pages
+### HTML Reports (Standard Gatling)
+- Location: `build/reports/gatling/[simulation]/index.html`
+- Features: Interactive charts, detailed metrics, response analysis
 
 ### JUnit XML Reports (CI/CD Integration)
-```bash
-# View JUnit XML
-cat reports/TEST-JavaApiTestSimulation.xml
+- Location: `build/gatling/junit/TEST-[SimulationName].xml`
+- Features: Performance test cases, assertions, CI/CD compatibility
 
-# Import into your CI/CD system
-# Jenkins: Archive as test results
-# GitLab CI: Use artifacts and junit reports
-# GitHub Actions: Use test reporting actions
-```
+## API Endpoints
 
-**JUnit XML Features:**
-- ✅ **9 test cases** (3 performance + 6 assertion tests)
-- 📊 **Detailed properties** with response time metrics
-- 🎯 **Performance assertions** (response time < 5000ms, success rate > 90%)
-- 🔧 **CI/CD compatible** format with proper timestamps
+- `GET /api/health` - Health check
+- `GET /api/users` - Get all users
+- `GET /api/users/{id}` - Get user by ID
 
-## 📁 Report Locations
+## Performance Thresholds
 
-After running tests, reports are available in multiple locations:
+- Max response time: < 5000ms
+- Success rate: > 90%
+- Configurable in `GatlingJUnitReportGenerator.java`
 
-```
-reports/                          # 📁 Centralized reports directory
-├── index.html                   # 🌐 Main HTML dashboard
-├── TEST-JavaApiTestSimulation.xml # 🧪 JUnit XML report
-├── req_*.html                   # 📄 Individual endpoint reports
-├── js/ and style/               # 🎨 Supporting assets
-└── simulation.log               # 📋 Raw Gatling data
+## Integration with Any Gatling Java Project
 
-build/reports/gatling/            # 📁 Gradle Gatling output
-├── javaapitestsimulation-*/     # 📊 Timestamped HTML reports
-└── junit/                       # 🧪 JUnit XML reports
-```
+This JUnit report generator can be used with any Gatling Java repository. See `INTEGRATION_GUIDE.md` for detailed instructions.
 
-## 🔧 Available Gradle Tasks
+### Key Files to Copy:
+1. `GatlingJUnitReportGenerator.java` - The report generator
+2. Gradle task configurations from `build.gradle`
 
-### Gatling Tasks
-```bash
-./gradlew gatlingRun              # Run all Gatling simulations
-./gradlew gatlingRun --simulation=simulations.JavaApiTestSimulation  # Run specific simulation
-./gradlew quickPerformanceTest    # Run quick validation tests
-./gradlew performanceTest         # Complete performance test workflow
-```
+## CI/CD Integration
 
-### Application Tasks
-```bash
-./gradlew runApi                  # Start Spring Boot API server
-./gradlew generateJUnitXml        # Generate JUnit XML reports
-./gradlew build                   # Build the entire project
-./gradlew clean                   # Clean build artifacts
-```
-
-### Available Simulations
-- **`JavaApiTestSimulation`** - Main performance test with realistic load patterns
-- **`QuickTestSimulation`** - Fast validation test for CI pipelines
-- **`JavaPerformanceTest`** - Extended load testing scenarios
-
-## 🎯 Build System Benefits
-
-### Gradle with Gatling Plugin Advantages
-- 🚀 **Native Gatling integration** - purpose-built for performance testing
-- 📦 **Zero Maven overhead** - lightweight, focused build system
-- 🔧 **Simplified configuration** - Gatling plugin handles complexity
-- ⚡ **Faster builds** - optimized for test execution
-- 🎯 **Task-based workflow** - granular control over test execution
-
-### Performance Thresholds
-The tests validate these performance criteria:
-- ⏱️ **Response Time**: < 5000ms (configurable)
-- ✅ **Success Rate**: > 90% (configurable)
-- 👥 **Load Pattern**: 5 immediate users + 10 users ramped over 30 seconds
-
-### Modifying Test Parameters
-Edit `src/test/java/simulations/JavaApiTestSimulation.java`:
-```java
-setUp(
-    apiTestScenario.injectOpen(
-        atOnceUsers(5),                    // Immediate users
-        rampUsers(10).during(Duration.ofSeconds(30))  // Ramp-up
-    ).protocols(httpProtocol)
-).assertions(
-    global().responseTime().max().lt(5000),    // Max response time
-    global().successfulRequests().percent().gt(90.0)  // Success rate
-);
-```
-
-## 🎯 API Endpoints Being Tested
-
-The performance tests target these endpoints:
-
-| Endpoint | Method | Purpose | Expected Response |
-|----------|--------|---------|-------------------|
-| `/api/users/health` | GET | Health check | `{"status": "healthy", "timestamp": 123...}` |
-| `/api/users` | GET | Get all users | Array of user objects |
-| `/api/users/{id}` | GET | Get user by ID | Single user object |
-
-## 🛠️ Troubleshooting
-
-### Common Issues
-
-**Port 8080 already in use:**
-```bash
-# Find and kill process using port 8080
-lsof -ti:8080 | xargs kill -9
-```
-
-**Tests failing with connection refused:**
-```bash
-# Ensure API server is running
-curl http://localhost:8080/api/users/health
-# Should return: {"status": "healthy", "timestamp": ...}
-```
-
-**Gradle build errors:**
-```bash
-# Clean and rebuild
-./gradlew clean build
-```
-
-**Reports not generated:**
-```bash
-# Check if Gatling tests completed successfully
-ls -la build/reports/gatling/
-# Manually run report generator
-./gradlew generateJUnitXml
-```
-
-### Log Locations
-- **Gatling logs**: `build/reports/gatling/*/simulation.log`
-- **Gradle logs**: Console output during `./gradlew` commands
-- **Spring Boot logs**: Console output during `./gradlew runApi`
-- **Mock API logs**: Console output during `python3 mock-api.py`
-
-## 🔄 CI/CD Integration
-
-### GitHub Actions (Automated)
-This project includes a comprehensive GitHub Actions workflow that automatically:
-- 🧪 **Runs performance tests** on every push and PR
-- 📊 **Generates dual reports** (HTML + JUnit XML)
-- 🌐 **Publishes results to GitHub Pages** for easy viewing
-- 📅 **Runs scheduled tests** daily at 2 AM UTC
-- 💬 **Comments on PRs** with performance results
-
-**Workflow Features:**
-- Automatic mock API server startup
-- Gradle-based test execution
-- Performance dashboard generation
-- GitHub Pages deployment
-- Test result artifacts
-
-**Accessing Results:**
-- **Live Dashboard**: Available at `https://[username].github.io/[repo-name]/`
-- **PR Comments**: Automatic performance summaries on pull requests
-- **Artifacts**: Downloadable reports for 30 days
-
-### Manual Triggers
-```bash
-# Trigger workflow manually from GitHub Actions tab
-# Or push to main/master branch to auto-trigger
-```
-
-### Local CI/CD Testing
-```bash
-# Test the complete workflow locally
-./run-tests-with-reports.sh
-
-# This mimics what GitHub Actions does:
-# 1. Starts mock API
-# 2. Runs Gradle performance tests  
-# 3. Generates reports
-# 4. Organizes results
-```
-
-### Jenkins Pipeline Example
+### Jenkins
 ```groovy
-pipeline {
-    stages {
-        stage('Performance Tests') {
-            steps {
-                sh './gradlew clean performanceTest'
-                publishHTML([
-                    allowMissing: false,
-                    alwaysLinkToLastBuild: true,
-                    keepAll: true,
-                    reportDir: 'reports',
-                    reportFiles: 'index.html',
-                    reportName: 'Gatling Performance Report'
-                ])
-                junit 'reports/TEST-JavaApiTestSimulation.xml'
-            }
-        }
-    }
-}
+junit 'build/gatling/junit/*.xml'
+publishHTML([reportDir: 'build/reports/gatling', reportFiles: 'index.html'])
 ```
 
-### GitLab CI Example
+### GitHub Actions
 ```yaml
-performance_tests:
-  script:
-    - ./gradlew clean performanceTest
-  artifacts:
-    reports:
-      junit: reports/TEST-JavaApiTestSimulation.xml
-    paths:
-      - reports/
-    expire_in: 1 week
-```
-
-### GitHub Actions Example
-```yaml
-- name: Run Performance Tests
-  run: ./gradlew clean performanceTest
-
-- name: Publish Test Results
-  uses: dorny/test-reporter@v1
-  if: always()
+- uses: dorny/test-reporter@v1
   with:
-    name: Performance Test Results
-    path: reports/TEST-JavaApiTestSimulation.xml
+    path: 'build/gatling/junit/*.xml'
     reporter: java-junit
 ```
 
-## 📈 Understanding Results
+## Development
 
-### Good Performance Indicators
-- ✅ **Response times** under 100ms for simple APIs
-- ✅ **Success rate** of 100% or close to it
-- ✅ **Stable response times** across different load levels
-- ✅ **No failed requests** during normal load
+### Available Gradle Tasks
+- `performanceTest` - Complete workflow
+- `generateJUnitXml` - Convert Gatling results to JUnit XML
+- `gatlingRun` - Run Gatling tests only
+- `quickPerformanceTest` - Lightweight validation
+- `runApi` - Start Spring Boot API
 
-### Performance Metrics Explained
-- **Mean Response Time**: Average time for all requests
-- **95th Percentile**: 95% of requests completed within this time
-- **Requests/sec**: Throughput measurement
-- **Success Rate**: Percentage of successful requests
+### Customization
+Modify thresholds and behavior in `GatlingJUnitReportGenerator.java`:
+```java
+private static final String GATLING_DIR = "build/reports/gatling";
+private static final String JUNIT_DIR = "build/gatling/junit";
+// Adjust response time and success rate thresholds
+```
 
-## 🏗️ Build System Migration
+## License
 
-### From Maven to Gradle
-This project has been migrated from Maven to Gradle with Gatling plugin for:
-- **Better Gatling integration** - native plugin support
-- **Simplified configuration** - less XML, more concise build scripts
-- **Faster execution** - optimized for performance testing workflows
-- **Task-based approach** - granular control over test execution phases
-
-### Key Differences
-| Aspect | Maven | Gradle (Current) |
-|--------|--------|------------------|
-| **Build File** | `pom.xml` | `build.gradle` |
-| **Test Execution** | `mvn gatling:test` | `./gradlew gatlingRun` |
-| **Report Generation** | `mvn exec:java` | `./gradlew generateJUnitXml` |
-| **Complete Workflow** | Custom Maven phases | `./gradlew performanceTest` |
-
-## 🤝 Contributing
-
-To add new test scenarios:
-1. Create new simulation in `src/test/java/simulations/`
-2. Follow the existing pattern in `JavaApiTestSimulation.java`
-3. Update this README with new simulation details
-
-## 📄 License
-
-This project is licensed under the MIT License.
-
-## 🆘 Support
-
-For issues or questions:
-1. Check the troubleshooting section above
-2. Review the sample reports in the `reports/` directory
-3. Examine the generated logs for error details
-4. Run `./gradlew tasks --group=gatling` to see available Gatling tasks
+This project demonstrates performance testing patterns and can be adapted for any Gatling Java project.

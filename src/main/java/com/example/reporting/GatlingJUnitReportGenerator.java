@@ -19,8 +19,9 @@ import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
 import java.util.*;
-import java.util.stream.Collectors;
 import java.util.stream.Stream;
+import java.util.logging.Logger;
+import java.util.logging.Level;
 
 /**
  * Java implementation for converting Gatling simulation.log to JUnit XML format
@@ -28,6 +29,7 @@ import java.util.stream.Stream;
  */
 public class GatlingJUnitReportGenerator {
 
+    private static final Logger LOGGER = Logger.getLogger(GatlingJUnitReportGenerator.class.getName());
     private static final String GATLING_DIR = "build/reports/gatling";
     private static final String JUNIT_DIR = "build/gatling/junit";
     private static final String OUTPUT_FILE = "TEST-JavaApiTestSimulation.xml";
@@ -39,8 +41,7 @@ public class GatlingJUnitReportGenerator {
             generator.createJUnitXml(results);
             generator.printSummary(results);
         } catch (Exception e) {
-            System.err.println("Error generating JUnit XML report: " + e.getMessage());
-            e.printStackTrace();
+            LOGGER.log(Level.SEVERE, "Error generating JUnit XML report: " + e.getMessage(), e);
             System.exit(1);
         }
     }
@@ -223,19 +224,19 @@ public class GatlingJUnitReportGenerator {
         Element systemOut = doc.createElement("system-out");
         testcase.appendChild(systemOut);
 
-        String metrics = String.format(
-            "=== Performance Test Results for %s ===\n" +
-            "Total Requests: %d\n" +
-            "Successful Requests: %d\n" +
-            "Failed Requests: %d\n" +
-            "Success Rate: %.1f%%\n" +
-            "Response Times (ms):\n" +
-            "  Min: %d\n" +
-            "  Max: %d\n" +
-            "  Average: %d\n" +
-            "Performance Assertions:\n" +
-            "  Max Response Time < 5000ms: %s\n" +
-            "  Success Rate > 90%%: %s",
+        String metrics = """
+            === Performance Test Results for %s ===
+            Total Requests: %d
+            Successful Requests: %d
+            Failed Requests: %d
+            Success Rate: %.1f%%
+            Response Times (ms):
+              Min: %d
+              Max: %d
+              Average: %d
+            Performance Assertions:
+              Max Response Time < 5000ms: %s
+              Success Rate > 90%%: %s""".formatted(
             name,
             summary.count,
             summary.count - summary.failures,
@@ -320,7 +321,7 @@ public class GatlingJUnitReportGenerator {
                 .filter(path -> path.getFileName().toString().startsWith("javaapitestsimulation"))
                 .max(Comparator.comparing(path -> path.getFileName().toString()));
 
-            if (!latestSimDir.isPresent()) {
+            if (latestSimDir.isEmpty()) {
                 throw new IOException("No Gatling simulation results found");
             }
 
@@ -349,19 +350,19 @@ public class GatlingJUnitReportGenerator {
         System.out.println("Test duration: " + String.format("%.2f seconds", results.duration));
     }
 
-    // Data classes
-    static class TestResults {
-        String simulationName = "JavaApiTestSimulation";
+    // Inner classes with proper visibility
+    public static class TestResults {
+        String simulationName;
+        Long startTime;
+        Long endTime;
+        double duration;
         int totalRequests = 0;
         int successfulRequests = 0;
         int failedRequests = 0;
         List<TestCase> testCases = new ArrayList<>();
-        Long startTime = null;
-        Long endTime = null;
-        double duration = 0.0;
     }
 
-    static class TestCase {
+    public static class TestCase {
         String name;
         String classname;
         double time;
@@ -370,7 +371,7 @@ public class GatlingJUnitReportGenerator {
         String failure;
     }
 
-    static class RequestSummary {
+    public static class RequestSummary {
         int count = 0;
         int failures = 0;
         double totalTime = 0.0;

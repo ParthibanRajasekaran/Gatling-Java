@@ -2,11 +2,9 @@ package simulations;
 
 import io.gatling.javaapi.core.*;
 import io.gatling.javaapi.http.*;
-
-import java.time.Duration;
-
 import static io.gatling.javaapi.core.CoreDsl.*;
 import static io.gatling.javaapi.http.HttpDsl.*;
+import java.time.Duration;
 
 public class JavaApiTestSimulation extends Simulation {
 
@@ -21,7 +19,7 @@ public class JavaApiTestSimulation extends Simulation {
     private final ScenarioBuilder apiTestScenario = scenario("Java API Test")
         .exec(
             http("Health Check")
-                .get("/api/users/health")
+                .get("/api/health")
                 .check(status().is(200))
         )
         .pause(Duration.ofSeconds(1))
@@ -34,7 +32,7 @@ public class JavaApiTestSimulation extends Simulation {
         .exec(
             http("Get User by ID")
                 .get("/api/users/1")
-                .check(status().in(200, 404))
+                .check(status().is(200))
         );
 
     // Setup the simulation
