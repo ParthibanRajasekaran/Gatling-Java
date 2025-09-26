@@ -103,6 +103,36 @@ setUp(
 );
 ```
 
+## Using the JUnit Report Generator in Other Projects
+
+The `GatlingJUnitReportGenerator.java` class is a portable utility for converting Gatling's `simulation.log` into a CI-friendly JUnit XML report. Here’s how to use it in any Gatling Java + Gradle project.
+
+### 1. Copy the Generator File
+Copy `src/main/java/com/example/reporting/GatlingJUnitReportGenerator.java` into your new project's source tree (e.g., `src/main/java/com/yourcompany/reporting/GatlingJUnitReportGenerator.java`).
+
+### 2. Create a Gradle Task
+Add the following task to your `build.gradle` file. This allows you to run the generator from the command line with `./gradlew generateJUnitXml`.
+
+```groovy
+task generateJUnitXml(type: JavaExec) {
+    group = 'reporting'
+    description = 'Generate JUnit XML report from Gatling results'
+    classpath = sourceSets.main.runtimeClasspath
+    // IMPORTANT: Update this path to match where you copied the file
+    mainClass = 'com.yourcompany.reporting.GatlingJUnitReportGenerator'
+}
+```
+
+### 3. Customize for Your Simulation
+The generator needs to know which simulation's results to parse. Open the `GatlingJUnitReportGenerator.java` file you copied and **update the `SIMULATION_NAME_PREFIX` constant** to match the name of your simulation class (in lowercase).
+
+For example, if your simulation is named `MyApiSimulation.java`, you would change the line to:
+```java
+private static final String SIMULATION_NAME_PREFIX = "myapisimulation"; // <-- CHANGE THIS
+```
+
+This ensures the generator finds the correct report directory and creates a properly named XML file.
+
 ## License
 
 This project is a template for robust performance testing and can be adapted for any Gatling Java project.

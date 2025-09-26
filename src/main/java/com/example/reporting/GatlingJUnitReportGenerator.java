@@ -24,15 +24,17 @@ import java.util.logging.Logger;
 import java.util.logging.Level;
 
 /**
- * Java implementation for converting Gatling simulation.log to JUnit XML format
- * This replaces the Python script with a pure Java solution
+ * Java implementation for converting Gatling simulation.log to JUnit XML format.
+ * This replaces the need for external scripts with a pure Java solution.
+ * For instructions on how to use this in other projects, see the README.md file.
  */
 public class GatlingJUnitReportGenerator {
 
     private static final Logger LOGGER = Logger.getLogger(GatlingJUnitReportGenerator.class.getName());
     private static final String GATLING_DIR = "build/reports/gatling";
     private static final String JUNIT_DIR = "build/gatling/junit";
-    private static final String OUTPUT_FILE = "TEST-JavaApiTestSimulation.xml";
+    private static final String SIMULATION_NAME_PREFIX = "javaapitestsimulation"; // <-- TODO: CHANGE THIS FOR YOUR PROJECT
+    private static final String OUTPUT_FILE = "TEST-" + SIMULATION_NAME_PREFIX + ".xml";
 
     public static void main(String[] args) {
         try {
@@ -318,7 +320,7 @@ public class GatlingJUnitReportGenerator {
         try (Stream<Path> stream = Files.list(gatlingDir)) {
             Optional<Path> latestSimDir = stream
                 .filter(Files::isDirectory)
-                .filter(path -> path.getFileName().toString().startsWith("javaapitestsimulation"))
+                .filter(path -> path.getFileName().toString().startsWith(SIMULATION_NAME_PREFIX))
                 .max(Comparator.comparing(path -> path.getFileName().toString()));
 
             if (latestSimDir.isEmpty()) {
