@@ -1,31 +1,12 @@
-# Build and dependency files
-build/
-.gradle/
-gradle-8.4/
+# Gradle
+.gradle
+build
 gradle-8.4-bin.zip
 
-# IDE files
+# IDE
 .idea/
 *.iml
-*.iws
-*.ipr
-.vscode/
 
-# OS files
+# OS
 .DS_Store
-Thumbs.db
 
-# Logs
-*.log
-logs/
-
-# Temporary files
-*.tmp
-*.temp
-
-# JUnit XML reports (can be regenerated)
-build/gatling/junit/
-
-# Gatling results (can be regenerated)
-build/reports/gatling/
-reports/
