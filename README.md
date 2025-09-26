@@ -1,116 +1,108 @@
-# Gatling Java Performance Testing with JUnit XML Report Generation
+# Gatling Java Performance Testing with GitHub Actions
 
-A complete Gatling Java performance testing solution with dual report generation (HTML + JUnit XML).
+A complete Gatling Java performance testing solution with automated report generation and deployment to GitHub Pages.
 
 ## Features
 
-- ✅ Complete Spring Boot API with REST endpoints
-- ✅ Gatling performance test simulations
-- ✅ JUnit XML report generator for CI/CD integration
-- ✅ Dual reporting: HTML reports + XML reports
-- ✅ Performance assertions and thresholds
-- ✅ Gradle build automation with custom tasks
+- ✅ Complete Spring Boot API with REST endpoints for testing
+- ✅ Gatling performance test simulations written in Java
+- ✅ Automated CI/CD pipeline with GitHub Actions
+- ✅ Dual reporting: Interactive HTML reports and CI-compatible JUnit XML
+- ✅ Performance assertions and build failure conditions
+- ✅ Gradle build automation for local and remote testing
+- ✅ Automatic deployment of Gatling reports to GitHub Pages
 
 ## Quick Start
 
 ### Prerequisites
 - Java 17+
-- Gradle 8.4+ (or use wrapper)
+- Gradle 8.4+ (or use the provided wrapper)
 
-### Run Performance Tests
+### Run Locally
 
 ```bash
-# Complete workflow (recommended)
-./gradlew performanceTest
+# Run the Spring Boot API in a separate terminal
+./gradlew run
 
-# Individual steps
-./gradlew runApi        # Start API server
-./gradlew gatlingRun    # Run Gatling tests
-./gradlew generateJUnitXml  # Generate JUnit XML
+# In another terminal, run the Gatling tests
+./gradlew gatlingRun
+
+# To generate JUnit XML reports after a Gatling run
+./gradlew generateJUnitXml
 ```
 
 ## Project Structure
 
 ```
+├── .github/workflows/
+│   └── performance-tests.yml     # GitHub Actions CI/CD pipeline
 ├── src/main/java/com/example/
-│   ├── api/                    # Spring Boot API
-│   │   ├── ApiApplication.java
-│   │   ├── controller/UserController.java
-│   │   ├── model/User.java
-│   │   └── service/UserService.java
+│   ├── api/                    # Spring Boot API source
 │   └── reporting/
 │       └── GatlingJUnitReportGenerator.java  # JUnit XML generator
 ├── src/test/java/simulations/
-│   ├── JavaApiTestSimulation.java    # Main performance tests
-│   ├── QuickTestSimulation.java      # Quick validation tests
-│   └── [other simulation files]
+│   └── JavaApiTestSimulation.java    # Main performance test simulation
 ├── build.gradle                      # Build configuration
-└── INTEGRATION_GUIDE.md              # Detailed integration guide
+└── README.md                       # This file
 ```
 
-## Reports Generated
+## Reports
 
-### HTML Reports (Standard Gatling)
-- Location: `build/reports/gatling/[simulation]/index.html`
-- Features: Interactive charts, detailed metrics, response analysis
+### HTML Reports (via GitHub Pages)
+- **Location**: Automatically deployed and accessible via a URL in your repository's "Pages" settings.
+- **Features**: Interactive charts, detailed metrics, and response time analysis.
 
-### JUnit XML Reports (CI/CD Integration)
-- Location: `build/gatling/junit/TEST-[SimulationName].xml`
-- Features: Performance test cases, assertions, CI/CD compatibility
+### JUnit XML Reports (for CI/CD Integration)
+- **Location**: `build/gatling/junit/TEST-[SimulationName].xml`
+- **Features**: Integrates with GitHub Actions test reporting to show pass/fail status directly in the workflow summary.
 
-## API Endpoints
+## API Endpoints Tested
 
-- `GET /api/health` - Health check
-- `GET /api/users` - Get all users
-- `GET /api/users/{id}` - Get user by ID
+- `GET /api/users/health` - Health check for the user service.
+- `GET /api/users` - Retrieves all users.
+- `GET /api/users/{id}` - Retrieves a specific user by their ID.
 
-## Performance Thresholds
+## Performance Assertions
 
-- Max response time: < 5000ms
-- Success rate: > 90%
-- Configurable in `GatlingJUnitReportGenerator.java`
+The build will fail if these conditions are not met:
+- **Max response time**: < 5000ms
+- **Success rate**: > 90%
+- These are configured directly in `JavaApiTestSimulation.java`.
 
-## Integration with Any Gatling Java Project
+## CI/CD Pipeline
 
-This JUnit report generator can be used with any Gatling Java repository. See `INTEGRATION_GUIDE.md` for detailed instructions.
+The entire testing and reporting process is automated via GitHub Actions in `.github/workflows/performance-tests.yml`.
 
-### Key Files to Copy:
-1. `GatlingJUnitReportGenerator.java` - The report generator
-2. Gradle task configurations from `build.gradle`
-
-## CI/CD Integration
-
-### Jenkins
-```groovy
-junit 'build/gatling/junit/*.xml'
-publishHTML([reportDir: 'build/reports/gatling', reportFiles: 'index.html'])
-```
-
-### GitHub Actions
-```yaml
-- uses: dorny/test-reporter@v1
-  with:
-    path: 'build/gatling/junit/*.xml'
-    reporter: java-junit
-```
+The pipeline performs the following steps:
+1.  **Builds** the project.
+2.  **Starts** the mock API server.
+3.  **Runs** the Gatling performance tests.
+4.  **Generates** JUnit XML reports for CI feedback.
+5.  **Publishes** test results to the GitHub Actions summary.
+6.  **Deploys** the full HTML Gatling report to GitHub Pages.
 
 ## Development
 
 ### Available Gradle Tasks
-- `performanceTest` - Complete workflow
-- `generateJUnitXml` - Convert Gatling results to JUnit XML
-- `gatlingRun` - Run Gatling tests only
-- `quickPerformanceTest` - Lightweight validation
-- `runApi` - Start Spring Boot API
+- `run`: Starts the Spring Boot API.
+- `build`: Compiles and builds the entire project.
+- `gatlingRun`: Runs only the Gatling performance tests.
+- `generateJUnitXml`: Converts the latest Gatling log into a JUnit XML report.
+- `test`: Runs standard unit tests (if any).
 
 ### Customization
-Modify thresholds and behavior in `GatlingJUnitReportGenerator.java`:
+To change performance test logic, such as the number of users or API endpoints:
+- Modify `src/test/java/simulations/JavaApiTestSimulation.java`.
 ```java
-private static final String GATLING_DIR = "build/reports/gatling";
-private static final String JUNIT_DIR = "build/gatling/junit";
-// Adjust response time and success rate thresholds
+// Example: Change user load
+setUp(
+    apiTestScenario.injectOpen(
+        atOnceUsers(10), // Change number of immediate users
+        rampUsers(20).during(Duration.ofSeconds(60)) // Change ramp-up
+    ).protocols(httpProtocol)
+);
 ```
 
 ## License
 
-This project demonstrates performance testing patterns and can be adapted for any Gatling Java project.
+This project is a template for robust performance testing and can be adapted for any Gatling Java project.
