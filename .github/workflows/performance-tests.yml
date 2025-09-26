@@ -220,7 +220,7 @@ jobs:
         fi
 
     - name: Upload Performance Test Results
-      uses: actions/upload-artifact@v3
+      uses: actions/upload-artifact@v4
       if: always()
       with:
         name: performance-test-results
