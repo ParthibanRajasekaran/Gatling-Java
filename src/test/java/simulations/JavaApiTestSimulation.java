@@ -19,7 +19,7 @@ public class JavaApiTestSimulation extends Simulation {
     private final ScenarioBuilder apiTestScenario = scenario("Java API Test")
         .exec(
             http("Health Check")
-                .get("/api/health")
+                .get("/actuator/health")
                 .check(status().is(200))
         )
         .pause(Duration.ofSeconds(1))

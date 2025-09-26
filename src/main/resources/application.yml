@@ -8,7 +8,7 @@ server:
 
 spring:
   application:
-    name: gatling-performance-test-api
+    name: gatling-java-api
   jackson:
     default-property-inclusion: non_null
     serialization:
@@ -22,16 +22,13 @@ management:
     web:
       exposure:
         include: health,info,metrics
-      base-path: /actuator
   endpoint:
     health:
       show-details: always
-  server:
-    port: 8081
 
 logging:
   level:
-    com.example.api: INFO
+    com.example: INFO
     org.springframework: WARN
     root: INFO
   pattern:

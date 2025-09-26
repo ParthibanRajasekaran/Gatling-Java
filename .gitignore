@@ -28,3 +28,4 @@ build/gatling/junit/
 
 # Gatling results (can be regenerated)
 build/reports/gatling/
+reports/
