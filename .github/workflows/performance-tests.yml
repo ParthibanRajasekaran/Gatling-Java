@@ -106,6 +106,12 @@ jobs:
           # Copy all HTML reports to public directory
           cp -r "$LATEST_GATLING_DIR"/* public/
           
+          # Rename the Gatling index.html to avoid conflicts
+          if [ -f "public/index.html" ]; then
+            mv public/index.html public/gatling-report.html
+            echo "✅ Renamed Gatling report to gatling-report.html"
+          fi
+          
           # Copy JUnit XML report
           if [ -f "build/gatling/junit/TEST-javaapitestsimulation.xml" ]; then
             cp build/gatling/junit/TEST-javaapitestsimulation.xml public/
@@ -156,13 +162,13 @@ jobs:
                     <div class="report-card">
                         <h3>📈 Interactive HTML Report</h3>
                         <p>Detailed performance charts, response time distributions, and comprehensive metrics analysis</p>
-                        <a href="index.html" class="btn">View HTML Report</a>
+                        <a href="gatling-report.html" class="btn">View HTML Report</a>
                     </div>
                     
                     <div class="report-card">
                         <h3>🧪 JUnit XML Report</h3>
                         <p>CI/CD compatible test results with performance assertions and detailed properties</p>
-                        <a href="TEST-JavaApiTestSimulation.xml" class="btn btn-secondary" download>Download XML</a>
+                        <a href="TEST-javaapitestsimulation.xml" class="btn btn-secondary" download>Download XML</a>
                     </div>
                 </div>
                 
