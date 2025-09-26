@@ -107,8 +107,8 @@ jobs:
           cp -r "$LATEST_GATLING_DIR"/* public/
           
           # Copy JUnit XML report
-          if [ -f "build/gatling/junit/TEST-JavaApiTestSimulation.xml" ]; then
-            cp build/gatling/junit/TEST-JavaApiTestSimulation.xml public/
+          if [ -f "build/gatling/junit/TEST-javaapitestsimulation.xml" ]; then
+            cp build/gatling/junit/TEST-javaapitestsimulation.xml public/
             echo "✅ JUnit XML report copied"
           fi
           
@@ -236,7 +236,7 @@ jobs:
       if: always()
       with:
         name: Performance Test Results
-        path: public/TEST-JavaApiTestSimulation.xml
+        path: public/TEST-javaapitestsimulation.xml
         reporter: java-junit
         fail-on-error: false
 
