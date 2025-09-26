@@ -84,7 +84,7 @@ jobs:
     - name: Run Gatling Performance Tests
       run: |
         echo "🚀 Running Gatling performance tests..."
-        ./gradlew gatlingRun --simulation=simulations.JavaApiTestSimulation --info
+        ./gradlew gatlingRun -Pgatling.simulationClass=simulations.JavaApiTestSimulation --info
 
     - name: Generate JUnit XML Reports
       run: |
