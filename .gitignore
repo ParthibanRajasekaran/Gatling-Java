@@ -2,6 +2,7 @@
 .gradle
 build
 gradle-8.4-bin.zip
+gradle-8.4/
 
 # IDE
 .idea/
@@ -9,4 +10,3 @@ gradle-8.4-bin.zip
 
 # OS
 .DS_Store
-
