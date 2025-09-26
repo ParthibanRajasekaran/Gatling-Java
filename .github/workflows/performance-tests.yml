@@ -12,7 +12,7 @@ on:
     # Allow manual trigger
 
 permissions:
-  contents: read
+  contents: write
   pages: write
   id-token: write
   checks: write
@@ -243,6 +243,8 @@ jobs:
     - name: Setup Pages
       if: github.ref == 'refs/heads/main' || github.ref == 'refs/heads/master'
       uses: actions/configure-pages@v5
+      with:
+        enablement: true
 
     - name: Upload to GitHub Pages
       if: github.ref == 'refs/heads/main' || github.ref == 'refs/heads/master'
